@@ -1,0 +1,39 @@
+# ALWAYS DECLARE FIRST THE DB CONTAINER AND THEN THE APP CONTAINER
+version: "3.9"
+services:
+  nginx:
+    build:
+      context: .
+  flask:
+    build:
+      context: .
+      dockerfile: ./docker/flask.dockerfile
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+  mysql:
+    build:
+      context: .
+      dockerfile: ./docker/mysql.dockerfile
+      args:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+  mongo:
+    build:
+      context: .
+      dockerfile: ./docker/mongo.dockerfile
+      args:
+        - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+        - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    ports:
+      - "${MONGO_PORT}:27017"
+volumes:
+  sql-data:
+networks:
+  my_network:
