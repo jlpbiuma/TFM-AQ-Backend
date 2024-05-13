@@ -1,0 +1,4 @@
+1. Hacer un archivo .py que se conecte a la base de datos en Docker
+2. Definir una función para conectarse a la base de datos
+3. Leer los datos de una tabla X -> SELECT * FROM X
+4. Insetar

@@ -1,7 +1,7 @@
-from flask import Flask
+from api import MyApp
 import os
 
-app = Flask(__name__)
+my_app = MyApp()  # Create an instance of MyApp
 
 MYSQL_DATABASE = os.environ["MYSQL_DATABASE"]
 MYSQL_PASSWORD = os.environ["MYSQL_PASSWORD"]
@@ -17,4 +17,4 @@ print(MONGO_INITDB_ROOT_PASSWORD)
 
 if __name__ == "__main__":
     # host the app on port 5000
-    app.run(debug=True, port=5000, threaded=True, host='0.0.0.0')
+    my_app.run(debug=True, port=5000, threaded=True, host='0.0.0.0')

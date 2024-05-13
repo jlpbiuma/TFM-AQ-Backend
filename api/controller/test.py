@@ -1,4 +1,5 @@
 def get_test():
     return 'Hello world!'
 
-def post_test():
+def create_test():
+    return 'Hello world!'

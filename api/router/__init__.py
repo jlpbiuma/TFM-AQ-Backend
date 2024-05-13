@@ -1,1 +1,3 @@
-from api.router.test import payrol_bp
+from api.router.test import *
+from api.router.medida import *
+from api.router.sensor import *
