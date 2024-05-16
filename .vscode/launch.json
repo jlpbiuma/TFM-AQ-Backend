@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python Debugger: Flask",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "app", // Full import path to your app.py file
+      "env": {
+        "FLASK_APP": "api.create_app:MyApp", // Full import path to your Flask application
+        "FLASK_DEBUG": "1"
+      },
+      "args": ["run"],
+      "jinja": true,
+      "autoStartBrowser": false
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+	"info": {
+		"_postman_id": "06ed12db-48d9-4f7e-be14-21af847340e3",
+		"name": "TFM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24060102"
+	},
+	"item": [
+		{
+			"name": "Backend",
+			"item": [
+				{
+					"name": "Medidas",
+					"item": [
+						{
+							"name": "create_medida",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"test\":\"Hello world!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/medida/create",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"create"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Test",
+					"item": [
+						{
+							"name": "create test",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/api/sensor/create",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"sensor",
+										"create"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Usuarios",
+					"item": []
+				},
+				{
+					"name": "Sensores",
+					"item": []
+				},
+				{
+					"name": "Dispositivos",
+					"item": []
+				},
+				{
+					"name": "Estaciones",
+					"item": []
+				},
+				{
+					"name": "Unidades",
+					"item": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "backend_base_url",
+			"value": "http://192.168.0.24:5000",
+			"type": "string"
+		}
+	]
+}
