@@ -42,23 +42,502 @@
 					]
 				},
 				{
-					"name": "Test",
+					"name": "Usuarios",
 					"item": [
 						{
-							"name": "create test",
+							"name": "create_usuario",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id_usuario exists in the response\r",
+											"if (responseJson.id_usuario) {\r",
+											"    // Set the id_usuario to an environment variable\r",
+											"    pm.environment.set(\"id_usuario\", responseJson.id_usuario);\r",
+											"} else {\r",
+											"    console.error(\"id_usuario not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"jose\",\r\n    \"email\":\"jlpb@gmail.com\",\r\n    \"name\":\"jose\",\r\n    \"password\":\"123\",\r\n    \"rol\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
-									"raw": "http://localhost:5000/api/sensor/create",
-									"protocol": "http",
+									"raw": "{{backend_base_url}}/usuario/create",
 									"host": [
-										"localhost"
+										"{{backend_base_url}}"
 									],
-									"port": "5000",
 									"path": [
-										"api",
+										"usuario",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_usuarios_pagination",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/usuario/?page=1&per_page=5",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"usuario",
+										""
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "per_page",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_usuario_by_id_usuario",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/usuario/{{id_usuario}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"usuario",
+										"{{id_usuario}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_usuario_by_id_usuario",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"password\":\"123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/usuario/{{id_usuario}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"usuario",
+										"{{id_usuario}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_usuario_by_id_usuario",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/usuario/{{id_usuario}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"usuario",
+										"{{id_usuario}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Sensores",
+					"item": [
+						{
+							"name": "create_sensor",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id_sensor exists in the response\r",
+											"if (responseJson.id_sensor) {\r",
+											"    // Set the id_sensor to an environment variable\r",
+											"    pm.environment.set(\"id_sensor\", responseJson.id_sensor);\r",
+											"} else {\r",
+											"    console.error(\"id_sensor not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"nombre\": \"Test\",\r\n    \"localizacion\": \"España\",\r\n    \"estado\": 1,\r\n    \"id_dispositivo\": \"{{id_dispositivo}}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/sensor/create",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
 										"sensor",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_sensor_pagination",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/sensor/?page=1&per_page=5",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"sensor",
+										""
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "per_page",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_sensor_by_id_sensor",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/sensor/{{id_sensor}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"sensor",
+										"{{id_sensor}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_sensor_by_id_dispositivo",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/sensor/dispositivo/{{id_dispositivo}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"sensor",
+										"dispositivo",
+										"{{id_dispositivo}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_sensor_by_id_sensor",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"password\":\"123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/sensor/{{id_sensor}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"sensor",
+										"{{id_sensor}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_sensor_by_id_sensor",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/sensor/{{id_sensor}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"sensor",
+										"{{id_sensor}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Dispositivos",
+					"item": [
+						{
+							"name": "create_dispositivo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id_dispositivo exists in the response\r",
+											"if (responseJson.id_dispositivo) {\r",
+											"    // Set the id_dispositivo to an environment variable\r",
+											"    pm.environment.set(\"id_dispositivo\", responseJson.id_dispositivo);\r",
+											"} else {\r",
+											"    console.error(\"id_dispositivo not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"nombre\":\"Hello world!\",\r\n    \"localizacion\":\"España\",\r\n    \"estado\":3,\r\n    \"id_estacion\": {{id_estacion}}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/dispositivo/create",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"dispositivo",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_dispositivos_pagination",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/dispositivo/?page=1&per_page=5",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"dispositivo",
+										""
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "per_page",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_dispositivo_by_id_dispositivo",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/dispositivo/{{id_dispositivo}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"dispositivo",
+										"{{id_dispositivo}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_dispositivo_by_id_estacion",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/dispositivo/estacion/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"dispositivo",
+										"estacion",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_dispositivo_by_id_dispositivo",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"password\":\"123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/dispositivo/{{id_dispositivo}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"dispositivo",
+										"{{id_dispositivo}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_dispositivo_by_id_dispositivo",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/dispositivo/{{id_dispositivo}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"dispositivo",
+										"{{id_dispositivo}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Estaciones",
+					"item": [
+						{
+							"name": "create_estacion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"test\":\"Hello world!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/create",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
 										"create"
 									]
 								}
@@ -68,24 +547,36 @@
 					]
 				},
 				{
-					"name": "Usuarios",
-					"item": []
-				},
-				{
-					"name": "Sensores",
-					"item": []
-				},
-				{
-					"name": "Dispositivos",
-					"item": []
-				},
-				{
-					"name": "Estaciones",
-					"item": []
-				},
-				{
 					"name": "Unidades",
-					"item": []
+					"item": [
+						{
+							"name": "create_unidad",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"test\":\"Hello world!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/unidad/create",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"unidad",
+										"create"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
@@ -115,7 +606,7 @@
 	"variable": [
 		{
 			"key": "backend_base_url",
-			"value": "http://192.168.0.24:5000",
+			"value": "http://192.168.0.24:5000/api",
 			"type": "string"
 		}
 	]

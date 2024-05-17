@@ -8,7 +8,7 @@ class MyApp:
         self.app = Flask(__name__)
         self.init_database_connections()
         self.register_blueprints()
-        self.register_middlewares()
+        # self.register_middlewares()
 
     def register_blueprints(self):
         bp = Blueprint('api', __name__)
@@ -16,7 +16,7 @@ class MyApp:
         self.app.register_blueprint(estacion_bp, url_prefix='/api/estacion')
         self.app.register_blueprint(medida_bp, url_prefix='/api/medida')
         self.app.register_blueprint(sensor_bp, url_prefix='/api/sensor')
-        self.app.register_blueprint(user_bp, url_prefix='/api/user')
+        self.app.register_blueprint(usuario_bp, url_prefix='/api/usuario')
         self.app.register_blueprint(unidad_bp, url_prefix='/api/unidad')
         self.app.register_blueprint(bp)
     
@@ -25,7 +25,7 @@ class MyApp:
 
     def init_database_connections(self):
         self.mysql = setup_mysql_connection(self.app)
-        self.mongo_db = setup_mongo_connection()
+        self.mongo_db = mongo_db
 
     def run(self, **kwargs):
         self.app.run(**kwargs)
