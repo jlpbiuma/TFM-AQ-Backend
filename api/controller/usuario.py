@@ -1,6 +1,6 @@
 # user_controller.py
 from flask import jsonify, request
-from api.model.usuario import Usuario
+from api.model import Usuario
 
 def create_usuario():
     data = request.get_json()

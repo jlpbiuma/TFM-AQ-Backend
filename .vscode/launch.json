@@ -10,6 +10,7 @@
         "FLASK_APP": "api.create_app:MyApp", // Full import path to your Flask application
         "FLASK_DEBUG": "1"
       },
+      "envFile": "${workspaceFolder}/.env",
       "args": ["run"],
       "jinja": true,
       "autoStartBrowser": false

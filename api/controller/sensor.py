@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from api.model.sensor import Sensor
+from api.model import Sensor
 
 def create_sensor():
     data = request.get_json()

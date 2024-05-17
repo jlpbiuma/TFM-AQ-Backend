@@ -18,6 +18,10 @@ class MyApp:
         self.app.register_blueprint(sensor_bp, url_prefix='/api/sensor')
         self.app.register_blueprint(usuario_bp, url_prefix='/api/usuario')
         self.app.register_blueprint(unidad_bp, url_prefix='/api/unidad')
+        self.app.register_blueprint(magnitud_bp, url_prefix='/api/magnitud')
+        self.app.register_blueprint(auth_bp, url_prefix='/api/auth')
+        self.app.register_blueprint(estaciones_dispositivos_bp, url_prefix='/api/estacion/dispositivo')
+        self.app.register_blueprint(estaciones_usuarios_bp, url_prefix='/api/estacion/usuario')
         self.app.register_blueprint(bp)
     
     def register_middlewares(self):

@@ -14,12 +14,34 @@
 					"item": [
 						{
 							"name": "create_medida",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id exists in the response\r",
+											"if (responseJson.id_medida) {\r",
+											"    // Set the id to an environment variablea\r",
+											"    pm.environment.set(\"id_medida\", responseJson.id_medida);\r",
+											"} else {\r",
+											"    console.error(\"id not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"test\":\"Hello world!\"\r\n}",
+									"raw": "{\r\n    \"id_unidad\": {{id_unidad}},\r\n    \"valor\": 25,\r\n    \"fecha_hora\": \"2024-05-17T12:00:00\"\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -34,6 +56,206 @@
 									"path": [
 										"medida",
 										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_medidas_by_pagination",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/medida/",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_magnitud_by_id_magnitud Copy 2",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/medida/{{id_medida}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"{{id_medida}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_last_medidas",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/medida/last",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"last"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_last_medidas_by_id_unidad",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/medida/last/{{id_unidad}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"last",
+										"{{id_unidad}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_medida_by_id_estacion",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/medida/estacion/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"estacion",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_medida_by_id_estacion Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/medida/estacion/{{id_estacion}}/last",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"estacion",
+										"{{id_estacion}}",
+										"last"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_medida_by_id_estacion_id_unidad",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/medida/estacion/{{id_estacion}}/unidad/{{id_unidad}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"estacion",
+										"{{id_estacion}}",
+										"unidad",
+										"{{id_unidad}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_medida_by_id_estacion_id_unidad_last",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/medida/estacion/{{id_estacion}}/unidad/{{id_unidad}}/last",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"estacion",
+										"{{id_estacion}}",
+										"unidad",
+										"{{id_unidad}}",
+										"last"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_medida_by_id_medida",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"valor\": 25\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/medida/{{id_medida}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"{{id_medida}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_medida_by_id_medida",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/medida/{{id_medida}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"medida",
+										"{{id_medida}}"
 									]
 								}
 							},
@@ -365,7 +587,7 @@
 											"\r",
 											"// Check if id_dispositivo exists in the response\r",
 											"if (responseJson.id_dispositivo) {\r",
-											"    // Set the id_dispositivo to an environment variable\r",
+											"    // Set the id_dispositivo to an environment variablea\r",
 											"    pm.environment.set(\"id_dispositivo\", responseJson.id_dispositivo);\r",
 											"} else {\r",
 											"    console.error(\"id_dispositivo not found in the response\");\r",
@@ -519,12 +741,34 @@
 					"item": [
 						{
 							"name": "create_estacion",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id exists in the response\r",
+											"if (responseJson.id) {\r",
+											"    // Set the id to an environment variablea\r",
+											"    pm.environment.set(\"id_estacion\", responseJson.id);\r",
+											"} else {\r",
+											"    console.error(\"id not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"test\":\"Hello world!\"\r\n}",
+									"raw": "{\r\n    \"id_administrador\": 1234,\r\n    \"nombre\":\"Estacion 1\",\r\n    \"localizacion\": \"España\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -543,6 +787,222 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "get_estaciones",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_estacion_by_id_estacion",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_estacion_by_id_estacion",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"localizacion\":\"Ecuador\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_estacion_by_id_estacion",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Posibles magnitudes",
+					"item": [
+						{
+							"name": "create_magnitud",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id exists in the response\r",
+											"if (responseJson.id) {\r",
+											"    // Set the id to an environment variablea\r",
+											"    pm.environment.set(\"id_magnitud\", responseJson.id);\r",
+											"} else {\r",
+											"    console.error(\"id not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"magnitud\": \"Temperatura\",\r\n    \"descripcion\":\"ºC\",\r\n    \"escala\": \"absoluta\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/magnitud/create",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"magnitud",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_magnitudes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/magnitud/",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"magnitud",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_magnitud_by_id_magnitud",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/magnitud/{{id_magnitud}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"magnitud",
+										"{{id_magnitud}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_magnitud_by_id_magitud",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"magnitud\":\"T\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/magnitud/{{id_magnitud}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"magnitud",
+										"{{id_magnitud}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_magnitud_by_id_magnitud",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/magnitud/{{id_magnitud}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"magnitud",
+										"{{id_magnitud}}"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -551,12 +1011,34 @@
 					"item": [
 						{
 							"name": "create_unidad",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id exists in the response\r",
+											"if (responseJson.id_unidad) {\r",
+											"    // Set the id to an environment variablea\r",
+											"    pm.environment.set(\"id_unidad\", responseJson.id_unidad);\r",
+											"} else {\r",
+											"    console.error(\"id not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"test\":\"Hello world!\"\r\n}",
+									"raw": "{\r\n    \"id_magnitud\":{{id_magnitud}},\r\n    \"id_estacion\":{{id_estacion}}\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -571,6 +1053,482 @@
 									"path": [
 										"unidad",
 										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_unidades",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/unidad/",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"unidad",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_unidad_by_id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/unidad/{{id_unidad}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"unidad",
+										"{{id_unidad}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_magnitud_by_id_estacion",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/unidad/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"unidad",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_unidad_by_id_unidad",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id_magnitud\":\"{{id_magnitud}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/unidad/{{id_unidad}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"unidad",
+										"{{id_unidad}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_unidad_by_id_unidad",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/unidad/{{id_unidad}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"unidad",
+										"{{id_unidad}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "register",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id exists in the response\r",
+											"if (responseJson.token) {\r",
+											"    // Set the id to an environment variablea\r",
+											"    pm.environment.set(\"token\", responseJson.token);\r",
+											"} else {\r",
+											"    console.error(\"token not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{username}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"name\":\"Jose\",\r\n    \"password\":\"{{password}}\",\r\n    \"rol\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/auth/register",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id exists in the response\r",
+											"if (responseJson.token) {\r",
+											"    // Set the id to an environment variablea\r",
+											"    pm.environment.set(\"token\", responseJson.token);\r",
+											"} else {\r",
+											"    console.error(\"token not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"{{username}}\",\r\n    \"password\":\"{{password}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/auth/login",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "forgot_password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Parse the response body\r",
+											"var responseJson = pm.response.json();\r",
+											"\r",
+											"// Check if id exists in the response\r",
+											"if (responseJson.token) {\r",
+											"    // Set the id to an environment variablea\r",
+											"    pm.environment.set(\"token\", responseJson.token);\r",
+											"} else {\r",
+											"    console.error(\"token not found in the response\");\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"{{email}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/auth/forgot-password",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"auth",
+										"forgot-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "reset password",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"{{email}}\",\r\n    \"new_password\":\"{{password}}\",\r\n    \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpscG9yZG9taW5nb2JyaXRvOTlAZ21haWwuY29tIiwiZXhwIjoxNzE2MDM1NDE3fQ.KLfWbfhLtHgDclq0pCLsq0zYzTsyALPXs7IOWf829r0\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/auth/reset-password",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"auth",
+										"reset-password"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Estaciones_Dispositivos",
+					"item": [
+						{
+							"name": "link_estacion_by_id_to_id_dispositivo",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id_dispositivo\":\"{{id_dispositivo}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/dispositivo/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"dispositivo",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_dispositivo_by_id_estacion",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/dispositivo/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"dispositivo",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_link_estacion_dispositivo_by_id_estacion",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id_dispositivo\":\"{{id_dispositivo}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/dispositivo/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"dispositivo",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_link_estacion_dispositivo_by_id_estacion",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/dispositivo/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"dispositivo",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Estaciones_Usuarios",
+					"item": [
+						{
+							"name": "link_estacion_by_id_to_id_usuario",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id_usuario\":\"{{id_usuario}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/usuario/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"usuario",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_usuario_by_id_estacion",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/usuario/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"usuario",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_link_estacion_usuario_by_id_estacion",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id_usuario\":\"{{id_usuario}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/usuario/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"usuario",
+										"{{id_estacion}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_link_estacion_usuario_by_id_estacion",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{backend_base_url}}/estacion/usuario/{{id_estacion}}",
+									"host": [
+										"{{backend_base_url}}"
+									],
+									"path": [
+										"estacion",
+										"usuario",
+										"{{id_estacion}}"
 									]
 								}
 							},
