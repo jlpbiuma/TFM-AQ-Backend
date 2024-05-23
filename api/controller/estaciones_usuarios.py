@@ -30,6 +30,15 @@ def get_usuarios_by_estacion(id_estacion):
             usuarios.append(user)
     return jsonify(usuarios), 200
 
+def get_estaciones_by_usuario(id_usuario):
+    links = EstacionesUsuarios.query.filter_by(ID_USUARIO=id_usuario).all()
+    estaciones = []
+    for link in links:
+        estacion = Estacion.query.get(link.ID_ESTACION).to_dict()
+        if estacion:
+            estaciones.append(estacion)
+    return jsonify(estaciones), 200
+
 # Update link between Estacion and Usuario
 def update_link_estacion_usuario(id_estacion):
     link = EstacionesUsuarios.query.filter_by(ID_ESTACION=id_estacion).first()

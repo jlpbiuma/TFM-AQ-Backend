@@ -4,11 +4,12 @@ FROM nginx:latest
 # Install gettext for envsubst
 RUN apt-get update && apt-get install -y gettext
 
-# Copy custom NGINX configuration file into the container
-COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom NGINX configuration files into the container
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
-# Copy the entire nginx directory (which includes certificates) into the container
-COPY ./certs /etc/nginx/cert
+# Copy SSL certificates into the container
+COPY ./certs/server.crt /etc/nginx/certs/server.crt
+COPY ./certs/server.key /etc/nginx/certs/server.key
 
 # Expose the necessary ports
 EXPOSE 80 443 5000

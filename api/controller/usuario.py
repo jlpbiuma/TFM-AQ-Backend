@@ -17,8 +17,8 @@ def create_usuario():
     user = user.save()
     return jsonify(user), 201
 
-def get_usuario(usuario_id):
-    user = Usuario.get_user_by_id(usuario_id)
+def get_usuario(id_usuario):
+    user = Usuario.get_user_by_id(id_usuario)
     if user:
         return jsonify(user), 200
     else:
@@ -31,19 +31,19 @@ def get_usuario_list():
     users = Usuario.get_users_by_pagination(page, per_page)
     return jsonify(users), 200
 
-def update_usuario(usuario_id):
+def update_usuario(id_usuario):
     data = request.get_json()
-    user = Usuario.get_user_by_id(usuario_id)
+    user = Usuario.get_user_by_id(id_usuario)
     if user:
-        user = Usuario.update_user_by_id(usuario_id, data)
+        user = Usuario.update_user_by_id(id_usuario, data)
         return jsonify(user), 200
     else:
         return jsonify({'error': 'User not found'}), 404
 
-def delete_usuario(usuario_id):
-    user = Usuario.get_user_by_id(usuario_id)
+def delete_usuario(id_usuario):
+    user = Usuario.get_user_by_id(id_usuario)
     if user:
-        user = Usuario.delete_user_by_id(usuario_id)
+        user = Usuario.delete_user_by_id(id_usuario)
         return jsonify(user), 200
     else:
         return jsonify({'error': 'User not found'}), 404

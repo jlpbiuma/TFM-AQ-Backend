@@ -2,14 +2,31 @@ from flask import jsonify, request
 from api.model import Unidad
 from api.database import mysql_db
 
+# Define the function to create a new Unidad
 def create_unidad():
     data = request.get_json()
+    
+    if not data or 'id_magnitud' not in data or 'id_estacion' not in data:
+        return jsonify({'error': 'Invalid input'}), 400
+    
+    id_magnitud = int(data['id_magnitud'])
+    id_estacion = int(data['id_estacion'])
+    
+    # Verify that the combination of ID_MAGNITUD and ID_ESTACION does not already exist
+    existing_unidad = Unidad.query.filter_by(ID_MAGNITUD=id_magnitud, ID_ESTACION=id_estacion).first()
+    if existing_unidad:
+        return jsonify({'error': 'Unidad with this ID_MAGNITUD and ID_ESTACION already exists'}), 400
+    
+    # Create the new Unidad
     new_unidad = Unidad(
-        ID_MAGNITUD=int(data.get('id_magnitud')),
-        ID_ESTACION=int(data.get('id_estacion'))
+        ID_MAGNITUD=id_magnitud,
+        ID_ESTACION=id_estacion
     )
-    mysql_db.session.add(new_unidad)
-    mysql_db.session.commit()
+    try:
+        mysql_db.session.add(new_unidad)
+        mysql_db.session.commit()
+    except:
+        return jsonify({"error":"Este ID_MAGNITUD o ID_ESTACION no existe"})
     return jsonify(new_unidad.to_dict()), 201
 
 def get_unidades():
@@ -24,7 +41,7 @@ def get_unidad_by_id(id_unidad):
     return jsonify(unidad.to_dict()), 200
 
 def get_unidad_by_id_estacion(id_estacion):
-    unidad = Unidad.query.get(id_estacion)
+    unidad = Unidad.query.filter_by(ID_ESTACION=id_estacion).first()
     if unidad is None:
         return jsonify({'error': 'Unidad not found'}), 404
     return jsonify(unidad.to_dict()), 200

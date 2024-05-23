@@ -1,98 +1,82 @@
 from functools import wraps
 from flask import jsonify, request
-import jwt
 from api.model import Usuario
+from functools import wraps
+from api.controller.tools import *
 
-def authenticate_user(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token:
-            return jsonify({'error': 'Token is missing'}), 401
-
-        try:
-            payload = jwt.decode(token, 'your_secret_key', algorithms=['HS256'])
-            username = payload.get('username')
-            if not username:
-                return jsonify({'error': 'Invalid token'}), 401
-
-            # Fetch user from MongoDB based on the username
-            user = Usuario.get_user_by_username(username)
-            if not user:
-                return jsonify({'error': 'User not found'}), 401
-
-            # Add user information to the request for further processing
-            request.user = user
-
-        except jwt.ExpiredSignatureError:
-            return jsonify({'error': 'Token has expired'}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({'error': 'Invalid token'}), 401
-
-        return func(*args, **kwargs)
-    return wrapper
-
+# Middleware to check if the user is a superadmin (role 4)
 def is_superadmin(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        user = getattr(request, 'user', None)
-        if user and user.role == 4:
+        # Get role and id_usuario by request
+        token = request.headers.get('Authorization')
+        role = Usuario.get_role_by_token(token)
+        if role == 4:
             return func(*args, **kwargs)
         else:
-            return jsonify({'error': 'Unauthorized'}), 403
+            return jsonify({"error": "Recurso no accesible"})
     return wrapper
 
+# Middleware to check if the user is an admin (role 3)
 def is_admin(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        user = getattr(request, 'user', None)
-        if user and user.role == 3:
+        # Get role and id_usuario by request
+        token = request.headers.get('Authorization')
+        role = Usuario.get_role_by_token(token)
+        if role >= 3:
             return func(*args, **kwargs)
         else:
-            return jsonify({'error': 'Unauthorized'}), 403
+            return jsonify({"error": "Recurso no accesible"})
     return wrapper
 
-def is_this_client(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        user = getattr(request, 'user', None)
-        client_id = kwargs.get('client_id')  # Assuming client_id is passed in the URL
-        if user and user.role == 1 and user.client_id == client_id:
-            return func(*args, **kwargs)
-        else:
-            return jsonify({'error': 'Unauthorized'}), 403
-    return wrapper
-
+# Middleware to check if the user is a tecnico (role 2)
 def is_tecnico(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        user = getattr(request, 'user', None)
-        if user and user.role == 2:
+        # Get role and id_usuario by request
+        token = request.headers.get('Authorization')
+        role = Usuario.get_role_by_token(token)
+        if role >= 2:
             return func(*args, **kwargs)
         else:
-            return jsonify({'error': 'Unauthorized'}), 403
+            return jsonify({"error": "Recurso no accesible"})
     return wrapper
 
-def is_sensor_and_admin(func):
+# Middleware to check if the user is a tecnico (role 2)
+def is_this_client_usuario(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        user = getattr(request, 'user', None)
-        if user and user.role == 3 and user.is_sensor:
+        # Verify token presence
+        token = request.headers.get('Authorization')
+        if not token:
+            return jsonify({'error': 'Token necesario'})
+
+        # Verify token validity
+        if not verify_token(token):
+            return jsonify({'error': 'Token expirado'})
+
+        # Verify user ID presence
+        requested_id_usuario = kwargs.get('id_usuario')
+        if not requested_id_usuario:
+            return jsonify({'error': 'No se especifica el usuario del que se quiere pedir la informacion'})
+
+        # Check user role
+        role = Usuario.get_role_by_id(requested_id_usuario)
+        if role >= 2:
             return func(*args, **kwargs)
-        else:
-            return jsonify({'error': 'Unauthorized'}), 403
+
+        # Allow access if the action is about their own data and they have role 1
+        id_usuario = request.get_json().get('sesion_id_usuario')
+        if not id_usuario:
+            return jsonify({'error': 'No se especifica el usuario de la sesión actual'})
+        if role == 1 and requested_id_usuario == id_usuario:
+            return func(*args, **kwargs)
+
+        return jsonify({"error": "Recurso no accesible"})
     return wrapper
 
-def is_no_client(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        user = getattr(request, 'user', None)
-        if user and user.role != 1:  # Assuming CLIENTE role is 1
-            return func(*args, **kwargs)
-        else:
-            return jsonify({'error': 'Unauthorized'}), 403
-    return wrapper
-
+# Define other middleware functions similarly...
 def config_headers(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')

@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from api.model import Sensor
+from api.model import Sensor, Dispositivo
 
 def create_sensor():
     data = request.get_json()
@@ -10,7 +10,10 @@ def create_sensor():
 
     if not nombre or not localizacion or not estado or not id_dispositivo:
         return jsonify({'error': 'Nombre, localizacion, estado, and id_dispositivo are required'}), 400
-
+    
+    dispositivo = Dispositivo.get_dispositivo_by_id(id_dispositivo)
+    if not dispositivo:
+        return jsonify({'error': 'Dispositivo with given id_dispositivo does not exist'}), 404
     sensor = Sensor(nombre, localizacion, estado, id_dispositivo)
     sensor = sensor.save()
     return jsonify(sensor), 201
@@ -35,6 +38,7 @@ def get_sensors_by_dispositivo(id_dispositivo):
 
 def update_sensor(sensor_id):
     data = request.get_json()
+    # ! FIRST VERIFY PROPERTIES
     sensor = Sensor.get_sensor_by_id(sensor_id)
     if sensor:
         sensor = Sensor.update_sensor_by_id(sensor_id, data)

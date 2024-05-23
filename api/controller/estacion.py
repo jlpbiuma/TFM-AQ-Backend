@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from api.model import Estacion, Usuario, EstacionesUsuarios, Dispositivo, EstacionesDispositivos
+from api.model import Estacion
 from api.database import mysql_db
 
 def create_estacion():

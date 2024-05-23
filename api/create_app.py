@@ -1,4 +1,5 @@
 from flask import Flask, Blueprint
+from flask_cors import CORS
 from api.router import *
 from api.database import *
 from api.middleware import *
@@ -6,9 +7,13 @@ from api.middleware import *
 class MyApp:
     def __init__(self):
         self.app = Flask(__name__)
+        self.configure_cors()
         self.init_database_connections()
         self.register_blueprints()
         # self.register_middlewares()
+
+    def configure_cors(self):
+        CORS(self.app, origins="*", allow_headers="*")
 
     def register_blueprints(self):
         bp = Blueprint('api', __name__)

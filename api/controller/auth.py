@@ -1,22 +1,6 @@
 from flask import jsonify, request
 from api.model import Usuario
-import jwt
-from datetime import datetime, timedelta
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import os
-import hashlib
-
-
-def generate_token(username):
-    # Generate a token with expiration time
-    payload = {
-        'username': username,
-        'exp': datetime.utcnow() + timedelta(hours=24)  # Token expires in 24 hours
-    }
-    token = jwt.encode(payload, os.environ.get("SECRET_KEY", "test"), algorithm='HS256')
-    return token
+from api.controller.tools import *
 
 def register():
     data = request.get_json()
@@ -24,10 +8,10 @@ def register():
     email = data.get('email')
     name = data.get('name')
     password = data.get('password')
-    rol = data.get('rol')  # Assuming rol is also provided in the request
+    rol = 1
 
-    if not username or not email or not name or not password or not rol:
-        return jsonify({'error': 'Username, email, name, password, and rol are required'}), 400
+    if not username or not email or not name or not password:
+        return jsonify({'error': 'Username, email, name, password are required'}), 400
 
     # Check if username or email is already in use
     if Usuario.get_user_by_username(username):
@@ -36,12 +20,12 @@ def register():
         return jsonify({'error': 'Email is already in use'}), 400
 
     user = Usuario(username, email, name, password, rol)
-    user.save()
-
+    user = user.save()
     # Generate token
-    token = generate_token(username)
-
-    return jsonify({'token': token }), 201
+    token = generate_token_by_user(user)
+    rol = get_rol_by_user(user)
+    id_usuario = get_id_usuario_by_user(user)
+    return jsonify({'token': token, 'role': rol, 'id_usuario': id_usuario}), 201
 
 def login():
     data = request.get_json()
@@ -55,8 +39,10 @@ def login():
     user = Usuario.authenticate(username, password)
     if user:
         # Generate and return a token
-        token = generate_token(username)
-        return jsonify({'token': token }), 200
+        token = generate_token_by_user(user)
+        rol = get_rol_by_user(user)
+        id_usuario = get_id_usuario_by_user(user)
+        return jsonify({'token': token, 'role': rol, 'id_usuario': id_usuario}), 200
     else:
         return jsonify({'error': 'Invalid username or password'}), 401
 
@@ -66,56 +52,12 @@ def forgot_password():
 
     if not email:
         return jsonify({"error": "Email is required"}), 400
-
-    return send_password_reset_email(email)
-
-def send_password_reset_email(target_email):
-    # Generate token
-    user = Usuario.get_user_by_email(target_email)
+    user = Usuario.get_user_by_email(email)
     if user:
-        token = generate_token(target_email)  # Use email as a unique identifier for the token
-
-        # Send email
-        sender_email = os.environ.get('EMAIL_BOT')  # Update with your email address
-        password = os.environ.get('EMAIL_PASSWORD_TFM')  # Update with your email password
-        smtp_server = os.environ.get('EMAIL_SERVER')  # Update with your SMTP server address
-        smtp_port = int(os.environ.get('EMAIL_PORT'))  # Update with your SMTP server port
-
-        message = MIMEMultipart("alternative")
-        message["Subject"] = "Password Reset Request"
-        message["From"] = sender_email
-        message["To"] = target_email
-
-        # Create the HTML content of the email
-        html = f"""
-        <html>
-            <body>
-                <p>Hello,</p>
-                <p>You requested a password reset for your account.</p>
-                <p>Please click the link below to reset your password:</p>
-                <p><a href="http://your_website.com/auth/reset_password?token={token}">Reset Password</a></p>
-                <p>If you didn't request a password reset, you can safely ignore this email.</p>
-            </body>
-        </html>
-        """
-
-        # Attach HTML content to the email
-        message.attach(MIMEText(html, "html"))
-
-        # Connect to SMTP server and send email
-        with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
-            try:
-                server.login(sender_email, password)
-                server.sendmail(sender_email, target_email, message.as_string())
-                return jsonify({"message": "Password reset email sent"}), 200
-            except smtplib.SMTPAuthenticationError:
-                # Failed to login due to incorrect credentials
-                return jsonify({"error": "Failed to login with provided email credentials"}), 401
-            except Exception as e:
-                # Other exceptions (e.g., network issues)
-                return jsonify({"error": str(e)}), 500
+        result_message, result_code = send_password_reset_email(email)
     else:
-        return jsonify({"error": "User not found"}), 404
+        return jsonify({'error': 'Email not found'}), 404
+    return jsonify(result_message), result_code
 
 def reset_password():
     # Get data from the request
@@ -130,7 +72,7 @@ def reset_password():
 
     try:
         # Decode the token to get the email
-        decoded_token = jwt.decode(token, os.environ.get("SECRET_KEY", "test"), algorithms=['HS256'])
+        decoded_token = decode_token(token)
         token_email = decoded_token.get('username')  # We used email as the username in the token
 
         # Verify the token email matches the provided email
@@ -138,7 +80,7 @@ def reset_password():
             return jsonify({"error": "Invalid token for the provided email"}), 401
 
         # Hash the new password
-        hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+        hashed_password = hashed_password(new_password)
 
         # Update the user's password in the database
         user = Usuario.get_user_by_email(email)

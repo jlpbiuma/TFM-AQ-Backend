@@ -1,7 +1,7 @@
 # user_model.py
 from api.database import mongo_db
 from bson.objectid import ObjectId
-import hashlib
+from api.controller.tools import *
 
 class Usuario:
     def __init__(self, username, email, name, password, role=1):
@@ -13,7 +13,7 @@ class Usuario:
 
     def save(self):
         # Hash the password before saving
-        hashed_password = hashlib.sha256(self.password.encode()).hexdigest()
+        hashed_password = get_hashed_password(self.password)
         users_collection = mongo_db['Usuario']
         result = users_collection.insert_one({
             'username': self.username,
@@ -31,6 +31,7 @@ class Usuario:
         users = []
         for user in users_cursor:
             user['_id'] = str(user['_id'])  # Convert ObjectId to string
+            del user['password']
             users.append(user)
         return users
 
@@ -41,6 +42,7 @@ class Usuario:
         if user:
             user['id_usuario'] = str(user['_id'])  # Convert ObjectId to string
             del user['_id']
+            del user['password']
         return user
     
     @staticmethod
@@ -50,6 +52,14 @@ class Usuario:
         if user:
             user['_id'] = str(user['_id'])  # Convert ObjectId to string
         return user
+
+    @staticmethod
+    def get_role_by_username(username):
+        users_collection = mongo_db['Usuario']
+        user = users_collection.find_one({'username': username})
+        if user:
+            rol = int(user['role'])  # Convert ObjectId to string
+        return rol
 
     @staticmethod
     def get_user_by_email(email):
@@ -71,8 +81,11 @@ class Usuario:
     def update_user_by_id(id_usuario, updated_data):
         users_collection = mongo_db['Usuario']
         # Ensure the _id key is not in the updated_data dictionary
-        if '_id' in updated_data:
+        if '_id' in updated_data or 'id_usuario' in updated_data:
             del updated_data['_id']
+            del updated_data['id_usuario']
+        if 'password' in updated_data:
+            updated_data['password'] = get_hashed_password(updated_data['password'])
         users_collection.update_one({'_id': ObjectId(id_usuario)}, {'$set': updated_data})
         return Usuario.get_user_by_id(id_usuario)
 
@@ -93,7 +106,6 @@ class Usuario:
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
             # Check if the hashed password matches the stored hashed password
             if user['password'] == hashed_password:
-                user['_id'] = str(user['_id'])  # Convert ObjectId to string
+                user['id_usuario'] = str(user['_id'])  # Convert ObjectId to string
                 return user
         return None
-
