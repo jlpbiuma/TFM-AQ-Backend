@@ -3,6 +3,7 @@ from flask_cors import CORS
 from api.router import *
 from api.database import *
 from api.middleware import *
+from api.mail import *
 
 class MyApp:
     def __init__(self):
@@ -10,6 +11,7 @@ class MyApp:
         self.configure_cors()
         self.init_database_connections()
         self.register_blueprints()
+        self.init_mail()
         # self.register_middlewares()
 
     def configure_cors(self):
@@ -35,6 +37,9 @@ class MyApp:
     def init_database_connections(self):
         self.mysql = setup_mysql_connection(self.app)
         self.mongo_db = mongo_db
+        
+    def init_mail(self):
+        self.app.config.from_object(Mailing)
 
     def run(self, **kwargs):
         self.app.run(**kwargs)
