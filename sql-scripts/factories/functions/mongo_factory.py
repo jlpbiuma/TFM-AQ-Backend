@@ -11,7 +11,8 @@ mongo_port = int(os.environ.get('MONGO_PORT', 27017))  # Convert port to int
 mongo_user = os.environ.get('MONGO_USER', 'root')
 mongo_password = os.environ.get('MONGO_PASSWORD', 'password')
 # Configuración de la conexión a la base de datos MongoDB
-mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}/"
+# mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}/"
+mongo_uri = os.environ.get('MONGO_ATLAS_URI', '')
 mongo_client = MongoClient(mongo_uri)
 MONGO_DB = mongo_client[os.getenv('MONGO_DATABASE')]
 
@@ -21,7 +22,7 @@ def insert_mongo_user(username, email, nombre, password):
     user_id = user_collection.insert_one({
         'username': username,
         'email': email,
-        'nombre': nombre,
+        'name': nombre,
         'password': password
     }).inserted_id
     return str(user_id)
@@ -29,17 +30,17 @@ def insert_mongo_user(username, email, nombre, password):
 def insert_mongo_dispositivo(nombre, localizacion, estado):
     dispositivo_collection = MONGO_DB['Dispositivo']
     dispositivo_id = dispositivo_collection.insert_one({
-        'nombre': nombre,
-        'localizacion': localizacion,
-        'estado': estado
+        'name': nombre,
+        'location': localizacion,
+        'state': estado
     }).inserted_id
     return str(dispositivo_id)
 
-def insert_mongo_sensor(nombre, id_medidas, id_dispositivo, localizacion):
+def insert_mongo_sensor(nombre, id_magnitud, id_dispositivo, localizacion):
     sensor_collection = MONGO_DB['Sensor']
     sensor_id = sensor_collection.insert_one({
-        'nombre': nombre,
-        'id_medidas': id_medidas,
+        'name': nombre,
+        'id_magnitud': id_magnitud,
         'id_dispositivo': id_dispositivo,
         'localizacion': localizacion
     }).inserted_id

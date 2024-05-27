@@ -19,6 +19,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/flask.dockerfile
+    container_name: ${FLASK_CONTAINER_NAME}
     environment:
       - MYSQL_HOST=${MYSQL_CONTAINER_NAME}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -30,6 +31,7 @@ services:
       - MONGO_USER=${MONGO_USER}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
       - MONGO_PORT=${MONGO_PORT}
+      - MONGO_ATLAS_URI=${MONGO_ATLAS_URI}
       - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - mysql
@@ -39,6 +41,30 @@ services:
     volumes:
       - .:/app
     restart: unless-stopped
+
+  factory:
+    build:
+      context: .
+      dockerfile: ./docker/factory.dockerfile
+    container_name: ${FACTORY_CONTAINER_NAME}
+    environment:
+      - MYSQL_HOST=${MYSQL_CONTAINER_NAME}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MONGO_HOST=${MONGO_CONTAINER_NAME}
+      - MONGO_DATABASE=${MONGO_DATABASE}
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_PORT=${MONGO_PORT}
+      - MONGO_ATLAS_URI=${MONGO_ATLAS_URI}
+      - SECRET_KEY=${SECRET_KEY}
+    depends_on:
+      - mysql
+      - mongo
+    networks:
+      - my_network
 
   mysql:
     build:

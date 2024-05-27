@@ -162,3 +162,10 @@ def delete_medida_by_id(id_medida):
     mysql_db.session.delete(medida)
     mysql_db.session.commit()
     return jsonify(medida.to_dict()), 200
+
+def delete_all_medidas_by_id_estacion(id_estacion):
+    medidas = Medida.query.filter_by(ID_ESTACION=id_estacion).all()
+    for medida in medidas:
+        mysql_db.session.delete(medida)
+    mysql_db.session.commit()
+    return jsonify({'message': 'All medidas deleted successfully'}), 200

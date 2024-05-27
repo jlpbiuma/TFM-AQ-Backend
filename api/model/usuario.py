@@ -26,6 +26,7 @@ class Usuario:
 
     @staticmethod
     def get_users_by_pagination(page, per_page):
+        # ! BASURA, NO USAR
         users_collection = mongo_db['Usuario']
         users_cursor = users_collection.find().skip((page - 1) * per_page).limit(per_page)
         users = []

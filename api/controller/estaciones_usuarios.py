@@ -61,3 +61,13 @@ def delete_link_estacion_usuario(id_estacion):
     mysql_db.session.delete(link)
     mysql_db.session.commit()
     return jsonify({'message': 'Link deleted successfully'}), 200
+
+# Delete link between Estacion and Usuario
+def delete_all_links_estacion_usuario(id_estacion):
+    links = EstacionesUsuarios.query.filter_by(ID_ESTACION=id_estacion).all()
+    if not links:
+        return jsonify({'error': 'Links not found for this Estacion'}), 404
+    for link in links:
+        mysql_db.session.delete(link)
+    mysql_db.session.commit()
+    return jsonify({'message': 'Links deleted successfully'}), 200

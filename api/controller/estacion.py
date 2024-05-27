@@ -1,6 +1,9 @@
 from flask import jsonify, request
 from api.model import Estacion
 from api.database import mysql_db
+from api.controller.estaciones_usuarios import delete_all_links_estacion_usuario
+from api.controller.estaciones_dispositivos import delete_all_links_estacion_dispositivo
+from api.controller.medida import delete_all_medidas_by_id_estacion
 
 def create_estacion():
     data = request.get_json()
@@ -39,6 +42,9 @@ def delete_estacion_by_id(id_estacion):
     estacion = Estacion.query.get(id_estacion)
     if estacion is None:
         return jsonify({'error': 'Estacion not found'}), 404
+    delete_all_links_estacion_usuario(id_estacion)  # Delete associated links first
+    delete_all_links_estacion_dispositivo(id_estacion)  # Delete associated links first
+    delete_all_medidas_by_id_estacion(id_estacion)  # Delete associated medidas first
     mysql_db.session.delete(estacion)
     mysql_db.session.commit()
     return jsonify(estacion.to_dict()), 200

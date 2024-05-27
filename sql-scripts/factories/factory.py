@@ -21,21 +21,15 @@ MAGNITUDES = [
 # Generar y vincular datos de ejemplo
 def generate_and_link_data(n_medidas, estaciones_range, magnitudes, usuarios_range, dispositivos_range, sensores_range):
     # Generar datos de ejemplo
+    # Insertar posibles magnitudes
+    posibles_magnitudes = []
+    for magnitud in magnitudes:
+        id_posible_magnitud = insert_posibles_magnitudes(*magnitud)
+        posibles_magnitudes.append(id_posible_magnitud)
     # Insertar estaciones
     for i in range(*estaciones_range):
         insert_estacion(random.randint(1, 10), f'Estacion_{i}', f'Localizacion_{i}')
     
-    # Insertar posibles magnitudes
-    for magnitud in magnitudes:
-        insert_magnitud(*magnitud)
-    
-    # Insertar medidas
-    for i in range(*estaciones_range):
-        for j in range(1, len(magnitudes) + 1):
-            for k in range(1, n_medidas):
-                fecha_hora = datetime.now() - timedelta(seconds=random.randint(0, 60))
-                insert_medida(j, i, random.uniform(0, 100), fecha_hora)
-
     # Insertar usuarios en MongoDB y vincular con estaciones en MySQL
     for i in range(*usuarios_range):
         username = f'usuario{i}'
@@ -59,11 +53,21 @@ def generate_and_link_data(n_medidas, estaciones_range, magnitudes, usuarios_ran
     
     # Insertar sensores en MongoDB
     for i in range(*sensores_range):
-        nombre = f'sensor{i}'
-        id_medidas = [f'medida{j}' for j in range(1, len(magnitudes))]  # Iterar sobre el número de magnitudes
-        id_dispositivo = insert_mongo_dispositivo(f'dispositivo{i}', f'Localizacion {i}', 'activo')
+        nombre_sensor = f'sensor{i}'
+        nombre_dispositivo = f'dispositivo{i}'
         localizacion = f'Localizacion {i}'
-        insert_mongo_sensor(nombre, id_medidas, id_dispositivo, localizacion)
+        id_dispositivo = insert_mongo_dispositivo(nombre_dispositivo, localizacion, 'activo')
+        # Get a random magnitude ID from the list of possible magnitudes
+        id_magnitud = random.choice(posibles_magnitudes)
+        insert_magnitud(id_magnitud)
+        insert_mongo_sensor(nombre_sensor, id_magnitud, id_dispositivo, localizacion)
+        
+    # Insertar medidas
+    for i in range(*estaciones_range):
+        for j in range(1, len(magnitudes) + 1):
+            for k in range(1, n_medidas):
+                fecha_hora = datetime.now() - timedelta(seconds=random.randint(0, 60))
+                insert_medida(j, i, random.uniform(0, 100), fecha_hora)
 
 # Llamar a la función con los parámetros deseados
 generate_and_link_data(

@@ -39,7 +39,7 @@ class MyApp:
         self.mongo_db = mongo_db
         
     def init_mail(self):
-        self.app.config.from_object(Mailing)
+        self.mail = setup_mail(self.app)
 
     def run(self, **kwargs):
         self.app.run(**kwargs)
