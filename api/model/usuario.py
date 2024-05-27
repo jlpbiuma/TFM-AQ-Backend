@@ -47,6 +47,16 @@ class Usuario:
         return user
     
     @staticmethod
+    def get_multiple_users_by_ids(ids_usuarios):
+        users_collection = mongo_db['Usuario']
+        users = users_collection.find({'_id': {'$in': [ObjectId(id) for id in ids_usuarios]}})
+        users = list(users)
+        for user in users:
+            user['_id'] = str(user['_id'])
+            del user['password']
+        return users
+    
+    @staticmethod
     def get_user_by_username(username):
         users_collection = mongo_db['Usuario']
         user = users_collection.find_one({'username': username})
@@ -104,7 +114,7 @@ class Usuario:
         user = users_collection.find_one({'username': username})
         if user:
             # Hash the provided password using the same method used during registration
-            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+            hashed_password = get_hashed_password(password)
             # Check if the hashed password matches the stored hashed password
             if user['password'] == hashed_password:
                 user['id_usuario'] = str(user['_id'])  # Convert ObjectId to string
