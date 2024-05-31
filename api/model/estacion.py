@@ -8,11 +8,13 @@ class Estacion(mysql_db.Model):
     ID_ADMINISTRADOR: Mapped[str]
     NOMBRE: Mapped[str]
     LOCALIZACION: Mapped[str]
+    IP_GATEWAY: Mapped[str]
     
     def to_dict(self):
         return {
             'id': self.ID_ESTACION,
             'id_administrador': self.ID_ADMINISTRADOR,
             'nombre': self.NOMBRE,
-            'localizacion': self.LOCALIZACION
+            'localizacion': self.LOCALIZACION,
+            'ip_gateway': self.IP_GATEWAY
         }

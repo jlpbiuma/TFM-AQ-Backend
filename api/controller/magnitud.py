@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from api.model import Magnitud
+from api.model import Magnitud, PosiblesMagnitudes
 from api.database import mysql_db
 
 def create_magnitud():
@@ -17,6 +17,11 @@ def get_magnitudes():
     magnitud = Magnitud.query.all()
     magnitud_dict = [magnitud.to_dict() for magnitud in magnitud]
     return jsonify(magnitud_dict), 200
+
+def get_posibles_magnitudes():
+    posibles_magnitudes = PosiblesMagnitudes.query.all()
+    posibles_magnitudes_dict = [posible_magnitud.to_dict() for posible_magnitud in posibles_magnitudes]
+    return jsonify(posibles_magnitudes_dict), 200    
 
 def get_magnitud_by_id(id_magnitud):
     magnitud = Magnitud.query.get(id_magnitud)

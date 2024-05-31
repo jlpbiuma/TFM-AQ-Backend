@@ -6,13 +6,16 @@ def create_dispositivo():
     data = request.get_json()
     nombre = data.get('nombre')
     localizacion = data.get('localizacion')
-    estado = data.get('estado')
+    estado = 'Online'
     id_estacion = data.get('id_estacion')
+    magnitudes = data.get('magnitudes')
 
     if not nombre or not localizacion or not estado:
         return jsonify({'error': 'Nombre, localizacion, and estado are required'}), 400
+    
+    topic = [f'estacion/{id_estacion}/medida/{magnitud}' for magnitud in magnitudes]
 
-    dispositivo = Dispositivo(nombre, localizacion, estado, id_estacion)
+    dispositivo = Dispositivo(nombre, localizacion, estado, id_estacion, topic)
     dispositivo = dispositivo.save()
     return jsonify(dispositivo), 201
 
@@ -26,7 +29,6 @@ def get_dispositivo(dispositivo_id):
 def get_dispositivo_list():
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
-
     dispositivos = Dispositivo.get_dispositivos_by_pagination(page, per_page)
     return jsonify(dispositivos), 200
 
