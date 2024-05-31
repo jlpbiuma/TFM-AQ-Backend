@@ -3,6 +3,7 @@ from mysql.connector import errorcode
 import os
 from dotenv import load_dotenv
 import time
+import random
 
 load_dotenv()
 
@@ -38,12 +39,15 @@ while mysql_conn is None:
         print("Reintentando conexión en 5 segundos...")
         time.sleep(5)
 
-# Función para insertar datos en la tabla ESTACIONES
-def insert_estacion(id_administrador, nombre, localizacion):
+def generate_random_ip():
+    return '.'.join(str(random.randint(0, 255)) for _ in range(4))
+
+# Function to insert data into the ESTACIONES table
+def insert_estacion(id_administrador, nombre, localizacion, ip_gateway, fecha_hora_ip):
     add_estacion = ("INSERT INTO ESTACIONES "
-                    "(ID_ADMINISTRADOR, NOMBRE, LOCALIZACION) "
-                    "VALUES (%s, %s, %s)")
-    data_estacion = (id_administrador, nombre, localizacion)
+                    "(ID_ADMINISTRADOR, NOMBRE, LOCALIZACION, IP_GATEWAY, FECHA_HORA_IP) "
+                    "VALUES (%s, %s, %s, %s, %s)")
+    data_estacion = (id_administrador, nombre, localizacion, ip_gateway, fecha_hora_ip)
     mysql_cursor.execute(add_estacion, data_estacion)
     mysql_conn.commit()
 

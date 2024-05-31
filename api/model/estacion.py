@@ -6,13 +6,16 @@ class Estacion(mysql_db.Model):
     __tablename__ = 'ESTACIONES'
     ID_ESTACION: Mapped[int] = mapped_column(primary_key=True)
     ID_ADMINISTRADOR: Mapped[str]
+    IP_GATEWAY: Mapped[str]
     NOMBRE: Mapped[str]
     LOCALIZACION: Mapped[str]
-    
+    FECHA_HORA_IP: Mapped[str]
     def to_dict(self):
         return {
             'id': self.ID_ESTACION,
             'id_administrador': self.ID_ADMINISTRADOR,
             'nombre': self.NOMBRE,
-            'localizacion': self.LOCALIZACION
+            'ip_gateway': self.IP_GATEWAY,
+            'localizacion': self.LOCALIZACION,
+            'fecha_hora_ip': self.FECHA_HORA_IP
         }

@@ -28,7 +28,13 @@ def generate_and_link_data(n_medidas, estaciones_range, magnitudes, usuarios_ran
         posibles_magnitudes.append(id_posible_magnitud)
     # Insertar estaciones
     for i in range(*estaciones_range):
-        insert_estacion(random.randint(1, 10), f'Estacion_{i}', f'Localizacion_{i}')
+        id_administrador = random.randint(1, 10)
+        nombre = f'Estacion_{i}'
+        localizacion = f'Localizacion_{i}'
+        ip_gateway = generate_random_ip()  # Generate random IP address
+        fecha_hora_ip = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        insert_estacion(id_administrador, nombre, localizacion, ip_gateway, fecha_hora_ip)
     
     # Insertar usuarios en MongoDB y vincular con estaciones en MySQL
     for i in range(*usuarios_range):

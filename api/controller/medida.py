@@ -8,10 +8,19 @@ from sqlalchemy import desc, and_
 def create_medida():
     # TODO: 1. Traducir el código de todas las unidades que tiene el dispositivo
     data = request.get_json()
+    topic = data.get('topic')
+    valor = float(data.get('valor'))
+    timestamp = data.get('timestamp')
+    id_estacion = int(topic.split('/')[1])
+    id_magnitud = int(topic.split('/')[3])
+    public_ip_gateway = request.remote_addr
+    if topic is None or valor is None or id_estacion is None or id_magnitud is None or timestamp is None:
+        return jsonify({'error': 'Missing required parameters'}), 400
     new_medida = Medida(
-        ID_MAGNITUD=data.get('id_unidad'),
-        VALOR=data.get('valor'),
-        FECHA_HORA=data.get('fecha_hora')
+        ID_MAGNITUD=id_magnitud,
+        ID_ESTACION=id_estacion,
+        VALOR=valor,
+        FECHA_HORA=timestamp
     )
     mysql_db.session.add(new_medida)
     mysql_db.session.commit()
