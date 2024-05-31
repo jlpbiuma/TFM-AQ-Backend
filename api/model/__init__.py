@@ -4,5 +4,5 @@ from api.model.medida import Medida
 from api.model.sensor import Sensor
 from api.model.usuario import Usuario
 from api.model.unidad import Unidad
-from api.model.magnitud import Magnitud
+from api.model.magnitud import Magnitud, PosiblesMagnitudes
 from api.model.estaciones_link import EstacionesUsuarios, EstacionesDispositivos
