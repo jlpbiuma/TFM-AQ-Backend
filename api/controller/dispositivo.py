@@ -1,6 +1,8 @@
 # dispositivo_controller.py
 from flask import jsonify, request
 from api.model.dispositivo import Dispositivo
+from api.model.estaciones_link import EstacionesMagnitudes
+from api.database import mysql_db
 
 def create_dispositivo():
     data = request.get_json()
@@ -8,15 +10,23 @@ def create_dispositivo():
     localizacion = data.get('localizacion')
     estado = 'Online'
     id_estacion = data.get('id_estacion')
-    magnitudes = data.get('magnitudes')
+    ids_magnitudes = data.get('magnitudes')
 
     if not nombre or not localizacion or not estado:
         return jsonify({'error': 'Nombre, localizacion, and estado are required'}), 400
     
-    topic = [f'estacion/{id_estacion}/medida/{magnitud}' for magnitud in magnitudes]
-
-    dispositivo = Dispositivo(nombre, localizacion, estado, id_estacion, topic)
+    dispositivo = Dispositivo(nombre, localizacion, estado, id_estacion)
     dispositivo = dispositivo.save()
+    
+    # Create a new link between the estacion and the magnitudes
+    for id_magnitud in ids_magnitudes:
+        new_estacion_magnitud = EstacionesMagnitudes(
+            ID_ESTACION=id_estacion,
+            ID_MAGNITUD=id_magnitud
+        )
+        mysql_db.session.add(new_estacion_magnitud)
+    mysql_db.session.commit()
+    
     return jsonify(dispositivo), 201
 
 def get_dispositivo(dispositivo_id):

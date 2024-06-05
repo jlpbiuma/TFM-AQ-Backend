@@ -3,12 +3,11 @@ from api.database import mongo_db
 from bson.objectid import ObjectId
 
 class Dispositivo:
-    def __init__(self, nombre, localizacion, estado, id_estacion, topics):
+    def __init__(self, nombre, localizacion, estado, id_estacion):
         self.nombre = nombre
         self.localizacion = localizacion
         self.estado = estado
         self.id_estacion = id_estacion
-        self.topics = topics
 
     def save(self):
         dispositivos_collection = mongo_db['Dispositivo']
@@ -17,7 +16,6 @@ class Dispositivo:
             'localizacion': self.localizacion,
             'estado': self.estado,
             'id_estacion': self.id_estacion,
-            'topics': self.topics
         })
         return Dispositivo.get_dispositivo_by_id(result.inserted_id)
 

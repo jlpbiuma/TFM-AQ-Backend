@@ -1,10 +1,11 @@
 from flask import jsonify, request
-from api.model import Estacion
+from api.model import Estacion, Magnitud
 from api.database import mysql_db
 from api.controller.estaciones_usuarios import delete_all_links_estacion_usuario
 from api.controller.estaciones_dispositivos import delete_all_links_estacion_dispositivo
 from api.controller.medida import delete_all_medidas_by_id_estacion
 from api.controller.tools.ip import encrypt_ip, decrypt_estacion_ip
+from api.model.estaciones_link import EstacionesMagnitudes
 
 def create_estacion():
     data = request.get_json()
@@ -26,24 +27,47 @@ def get_estacion_by_id(id_estacion):
     estacion = Estacion.query.get(id_estacion)
     if estacion is None:
         return jsonify({'error': 'Estacion not found'}), 404
-    return jsonify(decrypt_estacion_ip(estacion.to_dict())), 200
+    topics = EstacionesMagnitudes.query.filter_by(ID_ESTACION=id_estacion).all()
+    if topics is None:
+        return jsonify({'error': 'Topics not found'}), 404
+    array_topics = []
+    for topic in topics:
+        magnitud = Magnitud.query.get(topic.ID_MAGNITUD)
+        if magnitud is None:
+            return jsonify({'error': 'Magnitud not found'}), 404
+        partial_topic = {
+            'id_magnitud': magnitud.ID_MAGNITUD,
+            'magnitud': magnitud.MAGNITUD,
+            'descripcion': magnitud.DESCRIPCION,
+            'escala': magnitud.ESCALA,
+            'id_estacion': estacion.ID_ESTACION,
+            'topic': f'estacion/{estacion.ID_ESTACION}/magnitud/{magnitud.ID_MAGNITUD}'
+        }
+        array_topics.append(partial_topic)
+    estacion_dict = estacion.to_dict()
+    estacion_dict['topics'] = array_topics
+    return jsonify(decrypt_estacion_ip(estacion_dict)), 200
 
 def update_gateway_ip_by_id(id_estacion):
     estacion = Estacion.query.get(id_estacion)
     if estacion is None:
         return jsonify({'error': 'Estacion not found'}), 404
-
     data = request.get_json()
-    public_ip = data.get('public_ip')
     timestamp = data.get('timestamp')
+    if timestamp is None:
+        return jsonify({'error': 'Timestamp is required'}), 400
+    else:
+        estacion.FECHA_HORA_IP = timestamp
 
+    public_ip = data.get('public_ip')
     if public_ip:
         # Encrypt the IP address before storing it
-        encrypted_ip = encrypt_ip(public_ip)
-        estacion.IP_GATEWAY = encrypted_ip
+        estacion.IP_GATEWAY = encrypt_ip(public_ip)
 
-    if timestamp:
-        estacion.FECHA_HORA_IP = timestamp
+    private_ip = request.remote_addr
+    if private_ip:
+        # Encrypt the IP address before storing it
+        estacion.IP_LOCAL = encrypt_ip(private_ip)
 
     mysql_db.session.commit()
     return jsonify(estacion.to_dict()), 200

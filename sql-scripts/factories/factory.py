@@ -22,19 +22,28 @@ MAGNITUDES = [
 def generate_and_link_data(n_medidas, estaciones_range, magnitudes, usuarios_range, dispositivos_range, sensores_range):
     # Generar datos de ejemplo
     # Insertar posibles magnitudes
-    posibles_magnitudes = []
+    ids_magnitudes = []
     for magnitud in magnitudes:
-        id_posible_magnitud = insert_posibles_magnitudes(*magnitud)
-        posibles_magnitudes.append(id_posible_magnitud)
+        id_magnitud = insert_magnitud(*magnitud)
+        ids_magnitudes.append(id_magnitud)
     # Insertar estaciones
+    ids_estaciones = []
     for i in range(*estaciones_range):
         id_administrador = random.randint(1, 10)
         nombre = f'Estacion_{i}'
         localizacion = f'Localizacion_{i}'
         ip_gateway = generate_random_ip()  # Generate random IP address
+        ip_local = generate_random_local_ip()  # Generate random local IP address
         fecha_hora_ip = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-        insert_estacion(id_administrador, nombre, localizacion, ip_gateway, fecha_hora_ip)
+        id_estacion = insert_estacion(id_administrador, nombre, localizacion, ip_gateway, ip_local, fecha_hora_ip)
+        ids_estaciones.append(id_estacion)
+    
+    for i in range(1, 50):
+        # Get random station ID
+        id_estacion = random.choice(ids_estaciones)
+        # Get random magnitude ID
+        id_magnitud = random.choice(ids_magnitudes)
+        insert_estaciones_magnitudes(id_estacion, id_magnitud)
     
     # Insertar usuarios en MongoDB y vincular con estaciones en MySQL
     for i in range(*usuarios_range):
@@ -43,7 +52,6 @@ def generate_and_link_data(n_medidas, estaciones_range, magnitudes, usuarios_ran
         nombre = f'Nombre {i}'
         password = 'password123'
         id_usuario_mongo = insert_mongo_user(username, email, nombre, password)
-        
         id_estacion_sql = random.randint(*estaciones_range)  # Suponiendo que las estaciones SQL ya existen
         insert_estaciones_usuarios(id_estacion_sql, id_usuario_mongo)
     
@@ -53,19 +61,18 @@ def generate_and_link_data(n_medidas, estaciones_range, magnitudes, usuarios_ran
         localizacion = f'Localizacion {i}'
         estado = 'activo'
         id_dispositivo_mongo = insert_mongo_dispositivo(nombre, localizacion, estado)
-        
         id_estacion_sql = random.randint(*estaciones_range)  # Suponiendo que las estaciones SQL ya existen
         insert_estaciones_dispositivos(id_estacion_sql, id_dispositivo_mongo)
     
     # Insertar sensores en MongoDB
+    # ! EN EXTINCIÓN
     for i in range(*sensores_range):
         nombre_sensor = f'sensor{i}'
         nombre_dispositivo = f'dispositivo{i}'
         localizacion = f'Localizacion {i}'
         id_dispositivo = insert_mongo_dispositivo(nombre_dispositivo, localizacion, 'activo')
         # Get a random magnitude ID from the list of possible magnitudes
-        id_magnitud = random.choice(posibles_magnitudes)
-        insert_magnitud(id_magnitud)
+        id_magnitud = random.choice(ids_magnitudes)
         insert_mongo_sensor(nombre_sensor, id_magnitud, id_dispositivo, localizacion)
         
     # Insertar medidas
