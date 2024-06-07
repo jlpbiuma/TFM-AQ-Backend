@@ -83,3 +83,49 @@ def config_headers(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     return response
+
+def log_request_response(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # Get request data
+        request_data = {
+            "endpoint": request.path,
+            "method": request.method,
+            "ip_address": request.remote_addr,
+            "timestamp": datetime.utcnow(),
+            "request_body": request.get_data(as_text=True)
+        }
+
+        # Call the original function and get the response
+        response = func(*args, **kwargs)
+
+        # Get response data
+        response_data = {
+            "status_code": response.status_code,
+            "response_body": response.get_data(as_text=True)
+        }
+
+        # Combine request and response data
+        log_data = {**request_data, **response_data}
+
+        # Save log data to the database
+        save_log(log_data)
+
+        return response
+
+    return wrapper
+
+def save_log(log_data):
+    db = get_db()
+    cursor = db.cursor()
+    query = """
+    INSERT INTO LOGS (ENDPOINT, METHOD, STATUS_CODE, IP_ADDRESS, TIMESTAMP, REQUEST_BODY, RESPONSE_BODY)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    cursor.execute(query, (
+        log_data["endpoint"], log_data["method"], log_data["status_code"], 
+        log_data["ip_address"], log_data["timestamp"], 
+        log_data["request_body"], log_data["response_body"]
+    ))
+    db.commit()
+    cursor.close()

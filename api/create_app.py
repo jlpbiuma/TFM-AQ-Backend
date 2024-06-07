@@ -12,7 +12,7 @@ class MyApp:
         self.init_database_connections()
         self.register_blueprints()
         self.init_mail()
-        # self.register_middlewares()
+        self.register_middlewares()
 
     def configure_cors(self):
         CORS(self.app, origins="*", allow_headers="*")
@@ -30,9 +30,10 @@ class MyApp:
         self.app.register_blueprint(estaciones_dispositivos_bp, url_prefix='/api/estacion/dispositivo')
         self.app.register_blueprint(estaciones_usuarios_bp, url_prefix='/api/estacion/usuario')
         self.app.register_blueprint(bp)
-    
+
     def register_middlewares(self):
         self.app.after_request(config_headers)
+        self.app.wsgi_app = log_request_response(self.app.wsgi_app)
 
     def init_database_connections(self):
         self.mysql = setup_mysql_connection(self.app)
