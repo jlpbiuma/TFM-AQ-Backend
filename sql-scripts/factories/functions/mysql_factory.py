@@ -42,22 +42,18 @@ while mysql_conn is None:
 def generate_random_ip():
     return '.'.join(str(random.randint(0, 255)) for _ in range(4))
 
-def generate_random_local_ip():
-    return '192.168.1.' + str(random.randint(1, 255))
-
 # Function to insert data into the ESTACIONES table
-def insert_estacion(id_administrador, nombre, localizacion, ip_gateway, ip_local, fecha_hora_ip):
+def insert_estacion(id_administrador, nombre, localizacion, ip_gateway, fecha_hora_ip):
     add_estacion = ("INSERT INTO ESTACIONES "
-                    "(ID_ADMINISTRADOR, NOMBRE, LOCALIZACION, IP_GATEWAY, IP_LOCAL, FECHA_HORA_IP) "
-                    "VALUES (%s, %s, %s, %s, %s, %s)")
-    data_estacion = (id_administrador, nombre, localizacion, ip_gateway, ip_local, fecha_hora_ip)
+                    "(ID_ADMINISTRADOR, NOMBRE, LOCALIZACION, IP_GATEWAY, FECHA_HORA_IP) "
+                    "VALUES (%s, %s, %s, %s, %s)")
+    data_estacion = (id_administrador, nombre, localizacion, ip_gateway, fecha_hora_ip)
     mysql_cursor.execute(add_estacion, data_estacion)
     mysql_conn.commit()
-    return mysql_cursor.lastrowid
 
 # Función para insertar datos en la tabla POSIBLES_MAGNITUDES
-def insert_magnitud(magnitud, descripcion, escala):
-    add_magnitud = ("INSERT INTO MAGNITUDES "
+def insert_posibles_magnitudes(magnitud, descripcion, escala):
+    add_magnitud = ("INSERT INTO POSIBLES_MAGNITUDES "
                     "(MAGNITUD, DESCRIPCION, ESCALA) "
                     "VALUES (%s, %s, %s)")
     data_magnitud = (magnitud, descripcion, escala)
@@ -66,25 +62,14 @@ def insert_magnitud(magnitud, descripcion, escala):
     # Return the ID of the inserted row
     return mysql_cursor.lastrowid
 
-def insert_estaciones_magnitudes(id_estacion, id_magnitud):
-    # Check if the combination already exists
-    check_query = ("SELECT * FROM ESTACIONES_MAGNITUDES "
-                   "WHERE ID_ESTACION = %s AND ID_MAGNITUD = %s")
-    check_data = (id_estacion, id_magnitud)
-    mysql_cursor.execute(check_query, check_data)
-    if mysql_cursor.fetchone():
-        return
-    
-    # If combination doesn't exist, proceed with insertion
-    add_estacion_magnitud = ("INSERT INTO ESTACIONES_MAGNITUDES "
-                             "(ID_ESTACION, ID_MAGNITUD) "
-                             "VALUES (%s, %s)")
-    data_estacion_magnitud = (id_estacion, id_magnitud)
-    try:
-        mysql_cursor.execute(add_estacion_magnitud, data_estacion_magnitud)
-    except:
-        return
+def insert_magnitud(id_magnitud):
+    add_magnitud = ("INSERT INTO MAGNITUDES "
+                    "(ID_POSIBLE_MAGNITUD) "
+                    "VALUES (%s)")
+    data_magnitud = (id_magnitud,)  # Note the comma after id_magnitud
+    mysql_cursor.execute(add_magnitud, data_magnitud)
     mysql_conn.commit()
+
 
 # Función para insertar datos en la tabla MEDIDAS
 def insert_medida(id_magnitud, id_estacion, valor, fecha_hora):

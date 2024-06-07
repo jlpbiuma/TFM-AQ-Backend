@@ -13,7 +13,7 @@ def create_medida():
     timestamp = data.get('timestamp')
     id_estacion = int(topic.split('/')[1])
     id_magnitud = int(topic.split('/')[3])
-
+    public_ip_gateway = request.remote_addr
     if topic is None or valor is None or id_estacion is None or id_magnitud is None or timestamp is None:
         return jsonify({'error': 'Missing required parameters'}), 400
     new_medida = Medida(
