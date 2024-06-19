@@ -1,21 +1,28 @@
 # dispositivo_controller.py
 from flask import jsonify, request
 from api.model.dispositivo import Dispositivo
+from api.model.estacion import Estacion
+from api.model.estaciones_link import EstacionesMagnitudes
 
 def create_dispositivo():
     data = request.get_json()
-    nombre = data.get('nombre')
-    localizacion = data.get('localizacion')
+    nombre = data.get('name')
+    localizacion = data.get('location')
     estado = 'Online'
     id_estacion = data.get('id_estacion')
     magnitudes = data.get('magnitudes')
 
     if not nombre or not localizacion or not estado:
         return jsonify({'error': 'Nombre, localizacion, and estado are required'}), 400
-    
-    topic = [f'estacion/{id_estacion}/medida/{magnitud}' for magnitud in magnitudes]
 
-    dispositivo = Dispositivo(nombre, localizacion, estado, id_estacion, topic)
+    topics = []
+    for magnitud in magnitudes:
+        # Insert into EstacionesMagnitudes table
+        estacion_magnitud = EstacionesMagnitudes(ID_ESTACION=id_estacion, ID_MAGNITUD=magnitud)
+        estacion_magnitud.save()
+        topics.append(f'estacion/{id_estacion}/magnitud/{magnitud}')
+    
+    dispositivo = Dispositivo(nombre, localizacion, estado, id_estacion, topics)
     dispositivo = dispositivo.save()
     return jsonify(dispositivo), 201
 
@@ -30,6 +37,14 @@ def get_dispositivo_list():
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
     dispositivos = Dispositivo.get_dispositivos_by_pagination(page, per_page)
+    # Get the estaciones for each dispositivo
+    for dispositivo in dispositivos:
+        id_estacion = dispositivo['id_estacion']
+        estacion = Estacion.query.filter_by(ID_ESTACION=id_estacion).first()
+        dispositivo['nombre_estacion'] = estacion.NOMBRE
+        # Delete the topics property
+        if 'topics' in dispositivo:
+            del dispositivo['topics']
     return jsonify(dispositivos), 200
 
 def get_dispositivo_by_id_estacion(id_estacion):

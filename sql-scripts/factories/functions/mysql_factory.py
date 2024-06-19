@@ -42,18 +42,22 @@ while mysql_conn is None:
 def generate_random_ip():
     return '.'.join(str(random.randint(0, 255)) for _ in range(4))
 
+def generate_random_local_ip():
+    return '192.168.1.' + str(random.randint(1, 254))
+
 # Function to insert data into the ESTACIONES table
-def insert_estacion(id_administrador, nombre, localizacion, ip_gateway, fecha_hora_ip):
+def insert_estacion(id_administrador, nombre, localizacion, ip_gateway, ip_local, fecha_hora_ip):
     add_estacion = ("INSERT INTO ESTACIONES "
-                    "(ID_ADMINISTRADOR, NOMBRE, LOCALIZACION, IP_GATEWAY, FECHA_HORA_IP) "
-                    "VALUES (%s, %s, %s, %s, %s)")
-    data_estacion = (id_administrador, nombre, localizacion, ip_gateway, fecha_hora_ip)
+                    "(ID_ADMINISTRADOR, NOMBRE, LOCALIZACION, IP_GATEWAY, IP_LOCAL, FECHA_HORA_IP) "
+                    "VALUES (%s, %s, %s, %s, %s, %s)")
+    data_estacion = (id_administrador, nombre, localizacion, ip_gateway, ip_local, fecha_hora_ip)
     mysql_cursor.execute(add_estacion, data_estacion)
     mysql_conn.commit()
+    return mysql_cursor.lastrowid
 
 # Función para insertar datos en la tabla POSIBLES_MAGNITUDES
 def insert_posibles_magnitudes(magnitud, descripcion, escala):
-    add_magnitud = ("INSERT INTO POSIBLES_MAGNITUDES "
+    add_magnitud = ("INSERT INTO MAGNITUDES"
                     "(MAGNITUD, DESCRIPCION, ESCALA) "
                     "VALUES (%s, %s, %s)")
     data_magnitud = (magnitud, descripcion, escala)

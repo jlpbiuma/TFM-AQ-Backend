@@ -13,7 +13,6 @@ def create_medida():
     timestamp = data.get('timestamp')
     id_estacion = int(topic.split('/')[1])
     id_magnitud = int(topic.split('/')[3])
-    public_ip_gateway = request.remote_addr
     if topic is None or valor is None or id_estacion is None or id_magnitud is None or timestamp is None:
         return jsonify({'error': 'Missing required parameters'}), 400
     new_medida = Medida(
@@ -112,7 +111,7 @@ def get_medidas_by_id_estacion_id_magnitud(id_estacion, id_magnitud):
         and_(
             Medida.ID_ESTACION == id_estacion,
             Medida.ID_MAGNITUD == id_magnitud,
-            Medida.FECHA_HORA.between(start_date, end_date)
+            Medida.FECHA_HORA.between(start_date_str, end_date_str)
         )
     ).order_by(Medida.FECHA_HORA)
     
@@ -125,7 +124,8 @@ def get_medidas_by_id_estacion_id_magnitud(id_estacion, id_magnitud):
     
     return jsonify({
         'medidas': medidas_dict,
-        'total': total_count
+        'total': total_count,
+        'magnitud': Magnitud.query.get(id_magnitud).to_dict()
     }), 200
 
 def get_medidas_by_id_estacion_id_magnitud_last(id_estacion, id_unidad):

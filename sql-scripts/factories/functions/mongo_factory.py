@@ -38,12 +38,14 @@ def insert_mongo_user(username, email, nombre, password):
     }).inserted_id
     return str(user_id)
 
-def insert_mongo_dispositivo(nombre, localizacion, estado):
+def insert_mongo_dispositivo(nombre, localizacion, estado, estaciones):
     dispositivo_collection = MONGO_DB['Dispositivo']
+    random_id_estacion = random.choice(estaciones)
     dispositivo_id = dispositivo_collection.insert_one({
         'name': nombre,
         'location': localizacion,
-        'state': estado
+        'state': estado,
+        'id_estacion': random_id_estacion
     }).inserted_id
     return str(dispositivo_id)
 

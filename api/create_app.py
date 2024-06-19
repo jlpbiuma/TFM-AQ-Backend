@@ -15,7 +15,7 @@ class MyApp:
         self.register_middlewares()
 
     def configure_cors(self):
-        CORS(self.app, origins="*", allow_headers="*")
+        CORS(self.app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 
     def register_blueprints(self):
         bp = Blueprint('api', __name__)
@@ -32,8 +32,8 @@ class MyApp:
         self.app.register_blueprint(bp)
 
     def register_middlewares(self):
-        self.app.after_request(config_headers)
-        self.app.wsgi_app = log_request_response(self.app.wsgi_app)
+        self.app.before_request(log_request)
+        self.app.after_request(log_response)
 
     def init_database_connections(self):
         self.mysql = setup_mysql_connection(self.app)

@@ -1,5 +1,4 @@
 from flask import jsonify, request
-from api.model import Unidad
 from api.database import mysql_db
 
 # Define the function to create a new Unidad

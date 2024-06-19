@@ -13,9 +13,9 @@ class Dispositivo:
     def save(self):
         dispositivos_collection = mongo_db['Dispositivo']
         result = dispositivos_collection.insert_one({
-            'nombre': self.nombre,
-            'localizacion': self.localizacion,
-            'estado': self.estado,
+            'name': self.nombre,
+            'location': self.localizacion,
+            'state': self.estado,
             'id_estacion': self.id_estacion,
             'topics': self.topics
         })

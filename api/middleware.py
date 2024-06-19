@@ -1,6 +1,6 @@
 from functools import wraps
-from flask import jsonify, request
-from api.model import Usuario
+from flask import jsonify, request, g
+from api.model import Usuario, Logs
 from functools import wraps
 from api.controller.tools import *
 
@@ -84,48 +84,36 @@ def config_headers(response):
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     return response
 
-def log_request_response(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        # Get request data
-        request_data = {
-            "endpoint": request.path,
-            "method": request.method,
-            "ip_address": request.remote_addr,
-            "timestamp": datetime.utcnow(),
-            "request_body": request.get_data(as_text=True)
-        }
+def log_request():
+    g.request_data = {
+        "endpoint": request.path,
+        "method": request.method,
+        "ip_address": request.remote_addr,
+        "timestamp": datetime.utcnow(),
+        "request_body": request.get_data(as_text=True)
+    }
 
-        # Call the original function and get the response
-        response = func(*args, **kwargs)
+def log_response(response):
+    response_data = {
+        "status_code": response.status_code,
+        "response_body": response.get_data(as_text=True)
+    }
 
-        # Get response data
-        response_data = {
-            "status_code": response.status_code,
-            "response_body": response.get_data(as_text=True)
-        }
-
-        # Combine request and response data
-        log_data = {**request_data, **response_data}
-
-        # Save log data to the database
-        save_log(log_data)
-
-        return response
-
-    return wrapper
+    log_data = {**g.request_data, **response_data}
+    save_log(log_data)
+    return response
 
 def save_log(log_data):
-    db = get_db()
-    cursor = db.cursor()
-    query = """
-    INSERT INTO LOGS (ENDPOINT, METHOD, STATUS_CODE, IP_ADDRESS, TIMESTAMP, REQUEST_BODY, RESPONSE_BODY)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """
-    cursor.execute(query, (
-        log_data["endpoint"], log_data["method"], log_data["status_code"], 
-        log_data["ip_address"], log_data["timestamp"], 
-        log_data["request_body"], log_data["response_body"]
-    ))
-    db.commit()
-    cursor.close()
+    new_log = Logs(
+        ENDPOINT=log_data["endpoint"],
+        METHOD=log_data["method"],
+        STATUS_CODE=log_data["status_code"],
+        IP_ADDRESS=log_data["ip_address"],
+        TIMESTAMP=log_data["timestamp"],
+        # REQUEST_BODY=log_data["request_body"],
+        # RESPONSE_BODY=log_data["response_body"]
+        REQUEST_BODY="",
+        RESPONSE_BODY=""
+    )
+    new_log.save()
+    return new_log

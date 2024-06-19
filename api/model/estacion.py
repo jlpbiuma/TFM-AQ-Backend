@@ -7,9 +7,11 @@ class Estacion(mysql_db.Model):
     ID_ESTACION: Mapped[int] = mapped_column(primary_key=True)
     ID_ADMINISTRADOR: Mapped[str]
     IP_GATEWAY: Mapped[str]
+    IP_LOCAL: Mapped[str]
     NOMBRE: Mapped[str]
     LOCALIZACION: Mapped[str]
     FECHA_HORA_IP: Mapped[str]
+    
     def to_dict(self):
         return {
             'id': self.ID_ESTACION,
@@ -17,5 +19,6 @@ class Estacion(mysql_db.Model):
             'nombre': self.NOMBRE,
             'ip_gateway': self.IP_GATEWAY,
             'localizacion': self.LOCALIZACION,
-            'fecha_hora_ip': self.FECHA_HORA_IP
+            'fecha_hora_ip': self.FECHA_HORA_IP,
+            'ip_local': self.IP_LOCAL
         }
