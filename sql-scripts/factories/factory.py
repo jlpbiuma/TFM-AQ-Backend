@@ -20,7 +20,7 @@ MAGNITUDES = [
 ]
 
 # Generar y vincular datos de ejemplo
-def generate_and_link_data(n_medidas, estaciones_range, magnitudes, usuarios_range, dispositivos_range, sensores_range):
+def generate_and_link_data(n_medidas, estaciones_range, magnitudes, usuarios_range, dispositivos_range):
     # Generar datos de ejemplo
     # Insertar posibles magnitudes
     posibles_magnitudes = []
@@ -62,11 +62,11 @@ def generate_and_link_data(n_medidas, estaciones_range, magnitudes, usuarios_ran
         insert_estaciones_dispositivos(id_estacion_sql, id_dispositivo_mongo)
         
     # Insertar medidas
-    # for i in range(*estaciones_range):
-    #     for j in range(1, len(magnitudes) + 1):
-    #         for k in range(1, n_medidas):
-    #             fecha_hora = datetime.now() - timedelta(seconds=random.randint(0, 60))
-                # insert_medida(j, i, random.uniform(0, 100), fecha_hora)
+    for i in range(*estaciones_range):
+        for j in range(1, len(magnitudes) + 1):
+            for k in range(1, n_medidas):
+                fecha_hora = datetime.now() - timedelta(seconds=random.randint(0, 60))
+                insert_medida(j, i, random.uniform(0, 100), fecha_hora)
 
 # Llamar a la función con los parámetros deseados
 generate_and_link_data(
@@ -75,7 +75,6 @@ generate_and_link_data(
     magnitudes=MAGNITUDES,
     usuarios_range=(1, N_USUARIOS + 1),
     dispositivos_range=(1, N_DISPOSITIVOS + 1),
-    sensores_range=(1, N_SENSORES + 1)
 )
 
 # Cerrar la conexión a las bases de datos

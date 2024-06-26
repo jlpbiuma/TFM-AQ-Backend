@@ -25,6 +25,18 @@ class Usuario:
         return Usuario.get_user_by_id(result.inserted_id)
 
     @staticmethod
+    def get_all_users():
+        users_collection = mongo_db['Usuario']
+        users_cursor = users_collection.find()
+        users = []
+        for user in users_cursor:
+            user['id_usuario'] = str(user['_id'])
+            del user['_id']
+            del user['password']
+            users.append(user)
+        return users
+
+    @staticmethod
     def get_users_by_pagination(page, per_page):
         # ! BASURA, NO USAR
         users_collection = mongo_db['Usuario']
@@ -45,6 +57,35 @@ class Usuario:
             del user['_id']
             del user['password']
         return user
+    
+    @staticmethod
+    def get_negate_ids_usuarios(ids_usuarios):
+        users_collection = mongo_db['Usuario']
+        
+        # Ensure ids_usuarios is a list of valid ObjectId strings
+        object_ids = []
+        for id_str in ids_usuarios:
+            try:
+                object_ids.append(ObjectId(id_str))
+            except Exception as e:
+                print(f"Invalid ObjectId: {id_str}. Error: {e}")
+
+        # MongoDB query to find users not in the given list of IDs
+        if object_ids:
+            users = users_collection.find({'_id': {'$nin': object_ids}})
+        else:
+            users = users_collection.find()
+
+        users = list(users)
+
+        # Convert ObjectId to string and remove the password field
+        for user in users:
+            user['id_usuario'] = str(user['_id'])
+            del user['_id']
+            if 'password' in user:
+                del user['password']
+        
+        return users
     
     @staticmethod
     def get_multiple_users_by_ids(ids_usuarios):

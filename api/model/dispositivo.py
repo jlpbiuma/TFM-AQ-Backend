@@ -22,6 +22,43 @@ class Dispositivo:
         return Dispositivo.get_dispositivo_by_id(result.inserted_id)
 
     @staticmethod
+    def get_negate_ids_dispositivos(ids_dispositivos):
+        dispositivo_collection = mongo_db['Dispositivo']
+        
+        # Ensure ids_usuarios is a list of valid ObjectId strings
+        object_ids = []
+        for id_str in ids_dispositivos:
+            try:
+                object_ids.append(ObjectId(id_str))
+            except Exception as e:
+                print(f"Invalid ObjectId: {id_str}. Error: {e}")
+
+        # MongoDB query to find dispositivos not in the given list of IDs
+        if object_ids:
+            dispositivos = dispositivo_collection.find({'_id': {'$nin': object_ids}})
+        else:
+            dispositivos = dispositivo_collection.find()
+
+        dispositivos = list(dispositivos)
+
+        # Convert ObjectId to string and remove the password field
+        for dispositivo in dispositivos:
+            dispositivo['id_dispositivo'] = str(dispositivo['_id'])
+            del dispositivo['_id']
+        return dispositivos
+
+    @staticmethod
+    def get_all_dispositivos():
+        dispositivos_collection = mongo_db['Dispositivo']
+        dispositivos_cursor = dispositivos_collection.find()
+        dispositivos = []
+        for dispositivo in dispositivos_cursor:
+            dispositivo['id_dispositivo'] = str(dispositivo['_id'])
+            del dispositivo['_id']
+            dispositivos.append(dispositivo)
+        return dispositivos
+
+    @staticmethod
     def get_dispositivos_by_pagination(page, per_page):
         dispositivos_collection = mongo_db['Dispositivo']
         dispositivos_cursor = dispositivos_collection.find().skip((page - 1) * per_page).limit(per_page)

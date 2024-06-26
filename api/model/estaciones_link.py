@@ -16,7 +16,7 @@ class EstacionesUsuarios(mysql_db.Model):
 class EstacionesDispositivos(mysql_db.Model):
     __tablename__ = 'ESTACIONES_DISPOSITIVOS'
     ID_ESTACION: Mapped[int] = mapped_column(ForeignKey('ESTACIONES.ID_ESTACION'), primary_key=True, nullable=False)
-    ID_DISPOSITIVO: Mapped[str] = mapped_column(String, nullable=False)
+    ID_DISPOSITIVO: Mapped[str] = mapped_column(String, nullable=False, primary_key=True)
     
     def to_dict(self):
         return {

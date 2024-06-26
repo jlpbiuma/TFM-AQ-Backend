@@ -11,7 +11,8 @@ def link_estacion_by_id_to_id_usuario(id_estacion):
         return jsonify({'error': 'Estacion not found'}), 404
 
     # Get the list of user IDs from the request body
-    ids_usuarios = request.get_json('ids_usuarios').get('ids_usuarios')
+    data = request.get_json()
+    ids_usuarios = data.get('ids_usuarios')
     if not ids_usuarios:
         return jsonify({'error': 'No user IDs provided'}), 400
 
@@ -36,9 +37,7 @@ def link_estacion_by_id_to_id_usuario(id_estacion):
 
     # Commit all the new links to the database
     mysql_db.session.commit()
-
-    # Return the new links as a list of dictionaries
-    return jsonify(ids_usuarios), 201
+    return jsonify(users), 201
 
 # Read links between Estacion and Usuario
 def get_usuarios_by_estacion(id_estacion):
@@ -60,13 +59,20 @@ def get_estaciones_by_usuario(id_usuario):
     return jsonify(estaciones), 200
 
 def get_all_users_without_id_estacion(id_estacion):
-    links = EstacionesUsuarios.query.filter(not_(EstacionesUsuarios.ID_ESTACION == id_estacion)).all()
-    usuarios = []
-    for link in links:
-        user = Usuario.get_user_by_id(link.ID_USUARIO)
-        if user:
-            usuarios.append(user)
-    return jsonify(usuarios), 200
+    # Get the list of user IDs with this id_estacion in the EstacionesUsuarios collection
+    usuarios = EstacionesUsuarios.query.filter_by(ID_ESTACION=id_estacion).all()
+    # Get the ids_usuarios
+    ids_usuarios = [link.ID_USUARIO for link in usuarios]
+
+    # Get all users that are not in the list of ids_usuarios in the Usuarios collection
+    if ids_usuarios:
+        usuarios = Usuario.get_negate_ids_usuarios(ids_usuarios)
+    else:
+        usuarios = Usuario.get_all_users()
+
+    # Convert the cursor to a list and then to JSON
+    usuarios_list = list(usuarios)
+    return jsonify(usuarios_list), 200
 
 # Update link between Estacion and Usuario
 def update_link_estacion_usuario(id_estacion):

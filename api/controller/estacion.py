@@ -9,9 +9,9 @@ from api.controller.tools.ip import encrypt_ip, decrypt_estacion_ip
 def create_estacion():
     data = request.get_json()
     new_estacion = Estacion(
-        ID_ADMINISTRADOR=data.get('id_administrador'),
         NOMBRE=data.get('nombre'),
-        LOCALIZACION=data.get('localizacion')
+        LOCALIZACION=data.get('localizacion'),
+        ID_ADMINISTRADOR=1
     )
     mysql_db.session.add(new_estacion)
     mysql_db.session.commit()

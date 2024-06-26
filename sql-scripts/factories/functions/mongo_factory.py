@@ -48,13 +48,3 @@ def insert_mongo_dispositivo(nombre, localizacion, estado, estaciones):
         'id_estacion': random_id_estacion
     }).inserted_id
     return str(dispositivo_id)
-
-def insert_mongo_sensor(nombre, id_magnitud, id_dispositivo, localizacion):
-    sensor_collection = MONGO_DB['Sensor']
-    sensor_id = sensor_collection.insert_one({
-        'name': nombre,
-        'id_magnitud': id_magnitud,
-        'id_dispositivo': id_dispositivo,
-        'localizacion': localizacion
-    }).inserted_id
-    return str(sensor_id)

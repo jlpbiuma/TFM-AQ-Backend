@@ -110,8 +110,6 @@ def save_log(log_data):
         STATUS_CODE=log_data["status_code"],
         IP_ADDRESS=log_data["ip_address"],
         TIMESTAMP=log_data["timestamp"],
-        # REQUEST_BODY=log_data["request_body"],
-        # RESPONSE_BODY=log_data["response_body"]
         REQUEST_BODY="",
         RESPONSE_BODY=""
     )
